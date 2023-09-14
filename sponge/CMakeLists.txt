@@ -2,6 +2,9 @@ cmake_minimum_required (VERSION 2.8.5)
 cmake_policy (SET CMP0054 NEW)
 project (Sponge)
 
+# set up c++ standard version for compiler
+set(CMAKE_CXX_STANDARD 17) 
+
 include (etc/build_defs.cmake)
 include (etc/build_type.cmake)
 include (etc/cflags.cmake)
