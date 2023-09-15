@@ -1,35 +1,37 @@
-Lab 0 Writeup
-=============
+| 姓名 | 学号  | 邮箱  | 完成时间  |
+|------|---|---|---|
+|   陈嘉昀   | 211220137  | jiayunchen@smail.nju.edu.cn | 2023年9月15日  |
 
-My name: [your name here]
+*贴图什么的没有上传，直接看pdf吧*
 
-My Student number : [your Student number here]
+### 1 编译过程
+在编译过程中对框架代码做了一个小的修改，使得编译通过：
 
-This lab took me about [n] hours to do. I [did/did not] attend the lab session.
+![[Pasted image 20230915113544.png]]
 
-My secret code from section 2.1 was: [code here]
+然后在CMakeLists里面加上了有关C++标准的设置，保证项目的顺利编译：
 
-#### 1. Program Structure and Design:
+```CMakeLists
+# set up c++ standard version for compiler
+set(CMAKE_CXX_STANDARD 17)
+```
 
-...
+### 2 体验应用层
+按照手册里面的要求，逐一体验了各个网络层应用。尤其是telnet的应用，对不同主机之间的通信有了一个轮廓性质的认识，作为对话的发起方：先建立连接，随后向对方发送信息，然后接受信息。这对实现后面的代码颇有帮助。
 
-...
+### 3 写代码：把在控制台输入的东西“硬编码”到代码中
+#### 3.1 代码思路
+到了实现$get\_URL$函数的时候，实际上是把telnet中做过的事情利用api再实现一遍，大概是以下三步：
+* 利用TCPSocket建立连接
+* 往Socket中写
+* 从Socket中读
 
-#### 2. Implementation Challenges:
-
-...
-
-...
-
-#### 3. Remaining Bugs:
-
-...
-
-...
-
-*More details and requirements of sections above can be found in `lab0_tutorials.pdf/4.submit`*
-
+#### 3.2 运行结果
+![[6520a9213ff0d2a74583af359673b3f.png]]
 
 
+
+### 4 杂谈
+写邮件的方式确实很酷...
 
 
