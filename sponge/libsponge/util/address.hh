@@ -8,7 +8,9 @@
 #include <string>
 #include <sys/socket.h>
 #include <utility>
-
+// missing header in frame code
+#include <array>
+#include <stdexcept>
 //! Wrapper around [IPv4 addresses](@ref man7::ip) and DNS operations.
 class Address {
   public:

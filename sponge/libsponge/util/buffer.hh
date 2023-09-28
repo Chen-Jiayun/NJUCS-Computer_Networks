@@ -9,7 +9,9 @@
 #include <string_view>
 #include <sys/uio.h>
 #include <vector>
-
+// missing header in frame code
+#include <array>
+#include <stdexcept>
 //! \brief A reference-counted read-only string that can discard bytes from the front
 class Buffer {
   private:
