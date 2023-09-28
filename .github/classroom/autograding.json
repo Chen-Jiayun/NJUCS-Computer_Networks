@@ -1,0 +1,24 @@
+{
+  "tests": [
+    {
+      "name": "Lab1_1",
+      "setup": "cmake -B sponge/build sponge && cmake --build sponge/build -j12",
+      "run": "make -C sponge/build check_lab1_1",
+      "input": "",
+      "output": "",
+      "comparison": "included",
+      "timeout": 10,
+      "points": null
+    },
+    {
+      "name": "Lab1_2",
+      "setup": "cmake -B sponge/build sponge && cmake --build sponge/build -j12",
+      "run": "make -C sponge/build check_lab1_2",
+      "input": "",
+      "output": "",
+      "comparison": "included",
+      "timeout": 10,
+      "points": null
+    }
+  ]
+}
