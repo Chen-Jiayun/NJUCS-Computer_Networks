@@ -22,13 +22,18 @@ class ByteStream {
     // different approaches.
 
     bool _error{};  //!< Flag indicating that the stream suffered an error.
-    bool _empty; // default true
     
     std::string buffer;
 
     const size_t _capacity;
 
+    bool _input_end; // default false
+
     size_t _curr_size; // current used bytes
+
+    size_t _written;
+
+    size_t _read;
   public:
     //! Construct a stream with room for `capacity` bytes.
     ByteStream(const size_t capacity);
