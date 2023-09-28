@@ -3,6 +3,8 @@
 
 #include <string>
 
+// for local test
+class Test;
 
 //! \brief An in-order byte stream.
 
@@ -10,6 +12,7 @@
 //! side.  The byte stream is finite: the writer can end the input,
 //! and then no more bytes can be written.
 class ByteStream {
+    friend Test; // local test will check private variable directly.
   private:
     // Your code here -- add private members as necessary.
 
@@ -19,7 +22,13 @@ class ByteStream {
     // different approaches.
 
     bool _error{};  //!< Flag indicating that the stream suffered an error.
+    bool _empty; // default true
+    
+    std::string buffer;
 
+    const size_t _capacity;
+
+    size_t _curr_size; // current used bytes
   public:
     //! Construct a stream with room for `capacity` bytes.
     ByteStream(const size_t capacity);

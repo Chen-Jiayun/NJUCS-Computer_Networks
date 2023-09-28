@@ -8,12 +8,25 @@ template <typename... Targs>
 void DUMMY_CODE(Targs &&... /* unused */) {}
 
 using namespace std;
+// 'capacity + 5' to avoid out-of-bound
+ByteStream::ByteStream(const size_t capacity):
+    buffer(capacity + 5, '\0'), 
+    _capacity(capacity) {
+    this->_empty = true;
+    this->_curr_size = 0;
+}
 
-ByteStream::ByteStream(const size_t capacity) { DUMMY_CODE(capacity); }
-
+#define MIN(x, y) ((x) < (y) ? (x) : (y))
 size_t ByteStream::write(const string &data) {
-    DUMMY_CODE(data);
-    return {};
+    size_t ret = MIN(data.size(), _capacity - _curr_size); 
+    for(size_t i = _curr_size; i < _curr_size + ret; i += 1) {
+        buffer[i] = data[i - _curr_size];
+    }
+    _curr_size += ret;
+    if(_curr_size) {
+        _empty = false;
+    }
+    return ret;
 }
 
 //! \param[in] len bytes will be copied from the output side of the buffer
@@ -47,4 +60,6 @@ size_t ByteStream::bytes_written() const { return {}; }
 
 size_t ByteStream::bytes_read() const { return {}; }
 
-size_t ByteStream::remaining_capacity() const { return {}; }
+size_t ByteStream::remaining_capacity() const { 
+    return _capacity - _curr_size;
+ }
