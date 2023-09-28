@@ -33,13 +33,13 @@ size_t ByteStream::write(const string &data) {
 
 //! \param[in] len bytes will be copied from the output side of the buffer
 string ByteStream::peek_output(const size_t len) const {
-    assert(len >= _curr_size && "read too much bytes");
+    assert(len <= _curr_size && "read too much bytes");
     return this->buffer.substr(0, len);
 }
 
 //! \param[in] len bytes will be removed from the output side of the buffer
 void ByteStream::pop_output(const size_t len) {
-    assert(len >= _curr_size && "pop too much bytes");
+    assert(len <= _curr_size && "pop too much bytes");
     for(size_t i = len; i < _curr_size; i += 1) {
         buffer[i - len] = buffer[i];
     }
