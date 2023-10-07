@@ -103,7 +103,7 @@ void StreamReassembler::buffer_2_stream() {
         _buffer[i - end] = _buffer[i];
         _used[i - end] = _used[i];
     }
-    // pending false
+    // padding false
     for(size_t i = _capacity - end; i < _capacity; i += 1) {
         _used[i] = false;
     }
