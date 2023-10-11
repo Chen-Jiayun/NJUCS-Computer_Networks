@@ -1,0 +1,14 @@
+{
+  "tests": [
+    {
+      "name": "Lab2",
+      "setup": "sudo apt-get install -y libpcap-dev && cmake -B sponge/build sponge && cmake --build sponge/build -j12",
+      "run": "make -C sponge/build check_lab2",
+      "input": "",
+      "output": "",
+      "comparison": "included",
+      "timeout": 10,
+      "points": null
+    }
+  ]
+}
