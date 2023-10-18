@@ -15,9 +15,6 @@ using namespace std;
 using u64 = uint64_t;
 using u32 = uint32_t;
 
-constexpr uint64_t MOD = (0x1ul << 32);
-
-
 //! Transform an "absolute" 64-bit sequence number (zero-indexed) into a WrappingInt32
 //! \param n The input absolute 64-bit sequence number
 //! \param isn The initial sequence number
@@ -30,6 +27,7 @@ static u64 min3(u64 x, u64 y, u64 z) {
 }
 
 static uint64_t closest(uint64_t x, uint64_t c) {
+    constexpr uint64_t MOD = (0x1ul << 32);
     u64 d1 = x - c, d2 = x + MOD - c, d3 = x - MOD - c;
     if(x < c) {
         d1 = c - x;
@@ -42,7 +40,7 @@ static uint64_t closest(uint64_t x, uint64_t c) {
     else if(min == d2) return x + MOD;
     else if(min == d3) return x - MOD;
     else {
-        assert(0);
+        assert(0 && "should never touch here");
     }
     return 0;
 }

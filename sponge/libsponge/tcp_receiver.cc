@@ -23,12 +23,9 @@ void TCPReceiver::segment_received(const TCPSegment &seg) {
     }
     else {
         this->_is_fin_arrived |= seg.header().fin;
-
         WrappingInt32 seqno(seg.header().seqno);
-
-
         /**
-         *  index(payload[0]) = seq, if syn == false
+         *  index(payload[0]) = seq,     if syn == false
          *                    = seq + 1, if syn == true 
          */
         size_t index = unwrap(seqno + (seg.header().syn ? 1 : 0), _isn, _checkpoint); 
