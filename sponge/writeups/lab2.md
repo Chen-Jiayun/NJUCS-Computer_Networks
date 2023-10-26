@@ -1,29 +1,15 @@
-Lab 2 Writeup
-=============
+| 姓名 | 学号  | 邮箱  | 完成时间  |
+|------|---|---|---|
+|   陈嘉昀   | 211220137  | jiayunchen@smail.nju.edu.cn | 2023年10月17日  |
 
-My name: [your name here]
+### 1 核心设计
+#### 1.1 unwrap的设计
+目前拥有了一个u32 x， 要找到离u64 checkpoint最近的数target，target的低32位就是取x，那么核心就是求target的高32位：只可能取checkpoint的高32位c_h，或者c_h + 1，或者c_h - 1，所以只需要把这三个高位和低位拼起来，选取与checkpoint的差最小的高位即可。
 
-My Student number : [your Student number here]
-
-This lab took me about [n] hours to do. I [did/did not] attend the lab session.
-
-#### 1. Program Structure and Design:
-
-...
-
-...
-
-#### 2. Implementation Challenges:
-
-...
-
-...
-
-#### 3. Remaining Bugs:
-
-...
-
-...
-
-*More details and requirements of sections above can be found in `lab2_tutorials.pdf/5.submit`*
+#### 1.2 TCP receiver
+画好状态图，按照转移方程来做就好。有一个小坑需要注意一下，
+![[截屏2023-10-26 14.17.16.png]]
+根据seq求出来的absseq有可能是0，需要注意，不要往里面写一个index是-1的payload。
+### 2 运行结果
+![[截屏2023-10-26 14.20.19.png]]
 
