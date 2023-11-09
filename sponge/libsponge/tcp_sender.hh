@@ -30,7 +30,7 @@ public:
 
     void append_outstanding_segment(TCPSegment s);
 
-    // pop out how many bytes of outstanding segs;
+    // return pop out how many bytes of outstanding segs;
     size_t get_ack(const WrappingInt32 ackno, WrappingInt32 isn, uint64_t next_seq,
                    unsigned int init_RTO, size_t curr_time); 
     

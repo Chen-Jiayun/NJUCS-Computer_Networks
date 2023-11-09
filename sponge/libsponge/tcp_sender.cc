@@ -55,6 +55,7 @@ void TCPSender::fill_window() {
     if(_fin) {
         return ;
     }
+    // "_next_seqno < _latest_ack + win_sz" means "receiver are expecting new bits" 
     else if(!_fin && stream_in().eof() && _next_seqno < _latest_ack + win_sz) {
         _fin = true;
         s.header().fin = true;
@@ -99,6 +100,7 @@ void TCPSender::tick(const size_t ms_since_last_tick) {
     if(_timer.is_time_out(this->_time)) {
         TCPSegment s = _timer.get_oldest();
         _segments_out.push(s);
+        // adjust will differ, due to the rcvd window size
         _timer.adjust_on_retransmission(_time, _rcvd_window_size);
     }
 }
@@ -151,6 +153,8 @@ size_t RetransmissionTimer::get_ack(const WrappingInt32 ackno, WrappingInt32 isn
             break; 
         }
     }   
+    // reset timer iff the latest ack "has effected" to old acks
+    // the affect is represent by "pop_out_seg: bool"
     if(pop_out_seg) {
         this->run(curr_time, init_RTO);
         this->_count_retransmission_segment = 0;
@@ -172,5 +176,11 @@ void RetransmissionTimer::adjust_on_retransmission(size_t curr_time, uint16_t cu
         this->current_RTO *= 2;
         _count_retransmission_segment += 1;
     }
+    // restart timer func do two things:
+    //      1. set begin_time 
+    //      2. set curr_RTO
+    // curr_RTO has been adjust on the code above
+    // so what we need to do is set the begin_time
+    // so I don't call the func "Retransmission::run()"
     this->_begin_time = curr_time;
 }
