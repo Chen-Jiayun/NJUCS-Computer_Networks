@@ -9,6 +9,38 @@
 #include <functional>
 #include <queue>
 
+
+class RetransmissionTimer {
+private:
+    unsigned int current_RTO{0};
+    size_t _begin_time{0};
+    size_t _count_retransmission_segment{0};
+    bool _is_running{false};
+    std::queue<TCPSegment> _outstanding_q{};
+public:
+    RetransmissionTimer();
+
+    bool is_running() {return _is_running;}
+
+    void stop() {this->_is_running = false;}
+
+    void run(size_t curr_time, unsigned int init_RTO);    
+
+    bool is_time_out(size_t curr_time);
+
+    void append_outstanding_segment(TCPSegment s);
+
+    // return pop out how many bytes of outstanding segs;
+    size_t get_ack(const WrappingInt32 ackno, WrappingInt32 isn, uint64_t next_seq,
+                   unsigned int init_RTO, size_t curr_time); 
+    
+    TCPSegment get_oldest();
+
+    void adjust_on_retransmission(size_t curr_time, uint16_t curr_win);
+
+    size_t get_resend_times() const {return _count_retransmission_segment;}
+};
+
 //! \brief The "sender" part of a TCP implementation.
 
 //! Accepts a ByteStream, divides it up into segments and sends the
@@ -31,6 +63,24 @@ class TCPSender {
 
     //! the (absolute) sequence number for the next byte to be sent
     uint64_t _next_seqno{0};
+
+    uint64_t _byte_on_flight{0};
+
+    uint64_t _latest_ack{0};
+
+    size_t _time{0};
+
+    uint16_t _rcvd_window_size{1};
+
+    bool _syn{false};
+    
+    bool _fin{false};
+
+    bool _fin_sended{false};
+
+    RetransmissionTimer _timer{};
+
+    void send_seg(TCPSegment s);
 
   public:
     //! Initialize a TCPSender
