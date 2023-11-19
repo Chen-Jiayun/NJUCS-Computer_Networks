@@ -21,6 +21,10 @@ class TCPConnection {
     //! in case the remote TCPConnection doesn't know we've received its whole stream?
     bool _linger_after_streams_finish{true};
 
+    size_t _ms_since_last_seg{0};
+
+    void send();
+
   public:
     //! \name "Input" interface for the writer
     //!@{

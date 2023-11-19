@@ -24,23 +24,57 @@ size_t TCPConnection::unassembled_bytes() const {
     return _receiver.unassembled_bytes();
 }
 
-size_t TCPConnection::time_since_last_segment_received() const { return {}; }
+size_t TCPConnection::time_since_last_segment_received() const {
+    return _ms_since_last_seg;
+}
 
 void TCPConnection::segment_received(const TCPSegment &seg) { DUMMY_CODE(seg); }
 
 bool TCPConnection::active() const { return {}; }
 
 size_t TCPConnection::write(const string &data) {
-    DUMMY_CODE(data);
-    return {};
+    size_t ret = _sender.stream_in().write(data);
+    if(ret) {
+        _sender.fill_window();
+        this->send();
+    }
+    return ret;
 }
 
 //! \param[in] ms_since_last_tick number of milliseconds since the last call to this method
-void TCPConnection::tick(const size_t ms_since_last_tick) { DUMMY_CODE(ms_since_last_tick); }
+void TCPConnection::tick(const size_t ms_since_last_tick) { 
+    _ms_since_last_seg += ms_since_last_tick;
+    _sender.tick(ms_since_last_tick);
+    if(_sender.consecutive_retransmissions() > TCPConfig::MAX_RETX_ATTEMPTS) {
+        // TODO: send reset beg
+        make_reset();
+        return ;
+    }
+    send();
+}
 
-void TCPConnection::end_input_stream() {}
+void TCPConnection::end_input_stream() {
+    _sender.stream_in().end_input();
+}
 
-void TCPConnection::connect() {}
+void TCPConnection::send() {
+    auto& q = _sender.segments_out();
+    while(!q.empty()) {
+        TCPSegment seg = q.front();
+        q.pop();
+        seg.header().win = _receiver.window_size();
+        if(_receiver.ackno().has_value()) {
+            seg.header().ack = true;
+            seg.header().ackno = _receiver.ackno().value();
+        }
+        _segments_out.push(seg);
+    }
+}
+
+void TCPConnection::connect() {
+    _sender.fill_window();
+    this->send();
+}
 
 TCPConnection::~TCPConnection() {
     try {
