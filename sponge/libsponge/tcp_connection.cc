@@ -47,14 +47,18 @@ void TCPConnection::segment_received(const TCPSegment &seg) {
 
     // may lead to "receiver_OK"
     _receiver.segment_received(seg);
-
-    _linger_after_streams_finish = false;
+    if(receiver_OK() && !_sender.stream_in().eof()) {
+        _linger_after_streams_finish = false;
+    }
 
     if(seg.header().ack) {
         _sender.ack_received(seg.header().ackno, seg.header().win);
     }
 
     if(seg.length_in_sequence_space()) {
+        // bug case: syn arrival, should send a seg with "SYN"
+        // but '_sender.send_empty_segment()' is not enough
+        _sender.fill_window();
         bool has_send_seg = send();
         if(!has_send_seg) {
             _sender.send_empty_segment();
@@ -85,6 +89,7 @@ void TCPConnection::make_reset() {
     _segments_out.push(s);
     _sender.stream_in().set_error();
     _receiver.stream_out().set_error();
+    _active = false;
 }
 
 
@@ -111,6 +116,9 @@ void TCPConnection::tick(const size_t ms_since_last_tick) {
 
 void TCPConnection::end_input_stream() {
     _sender.stream_in().end_input();
+    // may need send fin manually
+    _sender.fill_window();
+    this->send();
 }
 
 
