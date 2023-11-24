@@ -67,9 +67,8 @@ bool ByteStream::input_ended() const {
 size_t ByteStream::buffer_size() const {
     return _curr_size;
 }
-// #include <iostream>
+
 bool ByteStream::buffer_empty() const {
-    // std::cerr << "buffer_empty _curr_size = " << this->_curr_size << "\n"; 
     return this->_curr_size == 0;
 }
 
