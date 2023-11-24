@@ -64,10 +64,17 @@ void TCPSender::fill_window() {
     }
     else {
         while(!stream_in().buffer_empty() && _next_seqno < _latest_ack + win_sz) {
-            std::cerr << "bug here\n";
+            // std::cerr << "bug:";
+            // std::cerr << "bool condition = "<< boolalpha << stream_in().buffer_empty();
+            // std::cerr << ", _next_seqno = " << _next_seqno << ", targets is " << _latest_ack + win_sz << "\n";
             // keep send segment
             uint16_t seg_sz = min(TCPConfig::MAX_PAYLOAD_SIZE, win_sz + _latest_ack - _next_seqno);
-            seg_sz = min(seg_sz, static_cast<uint16_t>(this->_stream.buffer_size()));
+            seg_sz = min(seg_sz, static_cast<uint16_t>(
+                min(this->_stream.buffer_size(), 
+                static_cast<size_t>( std::numeric_limits<uint16_t>::max())
+                )
+                
+                ));
             s.payload() = Buffer(this->_stream.read(seg_sz));
             // current window can hold the "fin" bit
             if(stream_in().eof() && seg_sz + _next_seqno < _latest_ack + win_sz ) {
