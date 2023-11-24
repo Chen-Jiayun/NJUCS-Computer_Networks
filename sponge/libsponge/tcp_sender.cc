@@ -4,7 +4,7 @@
 
 #include <random>
 #include <assert.h>
-
+#include <iostream>
 // Dummy implementation of a TCP sender
 
 // For Lab 3, please replace with a real implementation that passes the
@@ -64,6 +64,7 @@ void TCPSender::fill_window() {
     }
     else {
         while(!stream_in().buffer_empty() && _next_seqno < _latest_ack + win_sz) {
+            std::cerr << "bug here\n";
             // keep send segment
             uint16_t seg_sz = min(TCPConfig::MAX_PAYLOAD_SIZE, win_sz + _latest_ack - _next_seqno);
             seg_sz = min(seg_sz, static_cast<uint16_t>(this->_stream.buffer_size()));
