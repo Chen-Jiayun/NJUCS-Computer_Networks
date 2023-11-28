@@ -7,6 +7,10 @@
 
 mac_port_map_t mac_port_map;
 
+
+#define atomic \
+for(int __i = (pthread_mutex_lock(&mac_port_map.lock), 0); __i < 1; __i += 1, pthread_mutex_unlock(&mac_port_map.lock))
+
 // initialize mac_port table
 void init_mac_port_table()
 {
@@ -24,30 +28,68 @@ void init_mac_port_table()
 // destroy mac_port table
 void destory_mac_port_table()
 {
-	pthread_mutex_lock(&mac_port_map.lock);
-	mac_port_entry_t *entry, *q;
-	for (int i = 0; i < HASH_8BITS; i++) {
-		list_for_each_entry_safe(entry, q, &mac_port_map.hash_table[i], list) {
-			list_delete_entry(&entry->list);
-			free(entry);
+	atomic {
+		mac_port_entry_t *entry, *q;
+		for (int i = 0; i < HASH_8BITS; i++) {
+			list_for_each_entry_safe(entry, q, &mac_port_map.hash_table[i], list) {
+				list_delete_entry(&entry->list);
+				free(entry);
+			}
 		}
 	}
-	pthread_mutex_unlock(&mac_port_map.lock);
+}
+
+
+static mac_port_entry_t* lookup_entry(u8 mac[ETH_ALEN]) {
+	mac_port_entry_t* ret = NULL;
+	u8 index = hash8((char*)mac, ETH_ALEN);
+	atomic {
+		mac_port_entry_t *entry, *q;
+		list_for_each_entry_safe(entry, q, &mac_port_map.hash_table[index], list) {
+			if(strncmp((char*)mac, (char*)entry->mac, ETH_ALEN) == 0) {
+				ret = entry;
+			}
+		}
+	}
+	return ret;
 }
 
 // lookup the mac address in mac_port table
 iface_info_t *lookup_port(u8 mac[ETH_ALEN])
 {
-	// TODO: implement the lookup process here
-	fprintf(stdout, "TODO: implement the lookup process here.\n");
-	return NULL;
+	mac_port_entry_t* ret_entry = lookup_entry(mac);
+	iface_info_t* ret = NULL;
+	if(ret_entry) {
+		ret = ret_entry->iface;
+	}
+	return ret;
 }
+
 
 // insert the mac -> iface mapping into mac_port table
 void insert_mac_port(u8 mac[ETH_ALEN], iface_info_t *iface)
 {
-	// TODO: implement the insertion process here
-	fprintf(stdout, "TODO: implement the insertion process here.\n");
+	mac_port_entry_t* old = lookup_entry(mac); 
+	if(old == NULL) {
+		// add a new entry that doesn't exist
+		mac_port_entry_t* entry = malloc(sizeof(mac_port_entry_t));
+		entry->iface = iface;
+		entry->visited = time(NULL);
+		strncpy((char*)entry->mac, (char*)mac, ETH_ALEN);
+
+		u8 index = hash8((char*)mac, ETH_ALEN);
+		atomic {
+			list_add_head(&entry->list, &mac_port_map.hash_table[index]);
+		}
+	}
+	else {
+		// overwrite the old entry
+		atomic {
+			strncpy((char*)old->mac, (char*)mac, ETH_ALEN);
+			old->visited = time(NULL);
+		}
+	}
+
 }
 
 // dumping mac_port table
