@@ -114,10 +114,21 @@ void dump_mac_port_table()
 // last 30 seconds.
 int sweep_aged_mac_port_entry()
 {
-	// TODO: implement the sweeping process here
-	fprintf(stdout, "TODO: implement the sweeping process here.\n");
-
-	return 0;
+	int ret = 0;
+	time_t now_time = time(NULL);
+	atomic {
+		mac_port_entry_t *entry, *q;
+		for (int i = 0; i < HASH_8BITS; i++) {
+			list_for_each_entry_safe(entry, q, &mac_port_map.hash_table[i], list) {
+				if(now_time - entry->visited > MAC_PORT_TIMEOUT) {
+					list_delete_entry(&entry->list);
+					free(entry);
+					ret += 1;
+				}
+			}
+		}
+	}
+	return ret;
 }
 
 // sweeping mac_port table periodically, by calling sweep_aged_mac_port_entry
