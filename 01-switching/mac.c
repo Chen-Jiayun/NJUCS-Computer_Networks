@@ -90,7 +90,6 @@ void insert_mac_port(u8 mac[ETH_ALEN], iface_info_t *iface)
 			old->visited = time(NULL);
 		}
 	}
-
 }
 
 // dumping mac_port table
