@@ -61,6 +61,7 @@ iface_info_t *lookup_port(u8 mac[ETH_ALEN])
 	iface_info_t* ret = NULL;
 	if(ret_entry) {
 		ret = ret_entry->iface;
+		ret_entry->visited = time(NULL);
 	}
 	return ret;
 }

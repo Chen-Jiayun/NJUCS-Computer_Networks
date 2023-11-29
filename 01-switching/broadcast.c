@@ -8,6 +8,10 @@ extern void iface_send_packet(iface_info_t *iface, const char *packet, int len);
 
 void broadcast_packet(iface_info_t *iface, const char *packet, int len)
 {
-	// TODO: broadcast packet 
-	fprintf(stdout, "TODO: broadcast packet.\n");
+	iface_info_t* i = NULL;
+	list_for_each_entry(i, &instance->iface_list, list) {
+		if(i->index != iface->index) {
+			iface_send_packet(i, packet, len);
+		}
+	}
 }

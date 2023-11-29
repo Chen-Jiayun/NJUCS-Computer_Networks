@@ -1,0 +1,2 @@
+DEBUG: find the following interfaces:  b1-eth0 b1-eth1 b1-eth2.
+DEBUG: 2 aged entries in mac_port table are removed.
