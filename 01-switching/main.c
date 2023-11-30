@@ -20,7 +20,9 @@ void handle_packet(iface_info_t *iface, char *packet, int len)
 
 	iface_info_t* dst_port = lookup_port(eh->ether_dhost);
 	if(dst_port) {
-		iface_send_packet(dst_port, packet, len);
+		if(dst_port != iface) {
+			iface_send_packet(dst_port, packet, len);
+		}
 	}
 	else {
 		broadcast_packet(iface, packet, len);
