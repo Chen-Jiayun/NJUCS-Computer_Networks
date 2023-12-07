@@ -14,7 +14,21 @@
 // iface_send_packet
 void arp_send_request(iface_info_t *iface, u32 dst_ip)
 {
-	fprintf(stderr, "TODO: send arp request when lookup failed in arpcache.\n");
+//	fprintf(stderr, "TODO: send arp request when lookup failed in arpcache.\n");
+	ether_arp_t* arp = malloc(sizeof(ether_arp_t));
+	arp->arp_hrd = HTYPE_ETH;
+	arp->arp_pro = PTYPE_IPV4;
+	arp->arp_hln = HLEN_ETH;
+	arp->arp_pln = PLEN_IPV4;
+	arp->arp_op = ARPOP_REQUEST;
+
+	// set sender mac
+	memcpy(iface->mac, arp->arp_sha, HLEN_ETH);
+	// set send ip
+	arp->arp_spa = iface->ip;
+	arp->arp_tpa = dst_ip;
+
+	iface_send_packet(iface, (const char*)arp, sizeof(ether_arp_t));
 }
 
 // send an arp reply packet: encapsulate an arp reply packet, send it out

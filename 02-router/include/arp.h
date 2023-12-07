@@ -10,6 +10,18 @@
 #define ARPOP_REQUEST 1
 #define ARPOP_REPLY 2
 
+// eth hardware type
+#define HTYPE_ETH 1
+
+// ipv4 protocol type
+#define PTYPE_IPV4 0x0800
+
+// eth address length
+#define HLEN_ETH 6
+
+// ipv4 address length
+#define PLEN_IPV4 4
+
 struct ether_arp {
     u16 arp_hrd;		/* Format of hardware address.  */
     u16 arp_pro;		/* Format of protocol address.  */
@@ -21,6 +33,8 @@ struct ether_arp {
 	u8	arp_tha[ETH_ALEN];	/* target hardware address */
 	u32	arp_tpa;		/* target protocol address */
 } __attribute__ ((packed));
+
+typedef struct ether_arp ether_arp_t;
 
 void handle_arp_packet(iface_info_t *info, char *pkt, int len);
 void arp_send_request(iface_info_t *iface, u32 dst_ip);
