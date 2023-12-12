@@ -11,27 +11,27 @@
 #define ARP_ENTRY_TIMEOUT 15
 #define ARP_REQUEST_MAX_RETRIES	5
 
-struct cached_pkt {
+typedef struct cached_pkt {
 	struct list_head list;
 	char *packet;
 	int len;
-};
+} cached_pkt_t;
 
-struct arp_req {
+typedef struct arp_req {
 	struct list_head list;
 	iface_info_t *iface;
 	u32 ip4;
 	time_t sent;
 	int retries;
 	struct list_head cached_packets;
-};
+} arp_req_t;
 
-struct arp_cache_entry {
+typedef struct arp_cache_entry {
 	u32 ip4; 	// stored in host byte order
 	u8 mac[ETH_ALEN];
 	time_t added;
 	int valid;
-};
+} arp_cache_entry_t;
 
 typedef struct {
 	struct arp_cache_entry entries[MAX_ARP_SIZE];

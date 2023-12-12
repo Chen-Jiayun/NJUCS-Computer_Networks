@@ -18,7 +18,6 @@
 
 // eth address length
 #define HLEN_ETH 6
-
 // ipv4 address length
 #define PLEN_IPV4 4
 
