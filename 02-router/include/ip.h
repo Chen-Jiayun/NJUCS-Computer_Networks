@@ -16,7 +16,7 @@
 
 // #include <netinet/ip.h>
 #define IP_DF	0x4000		// Do not Fragment
-struct iphdr {
+typedef struct iphdr {
 #if __BYTE_ORDER == __LITTLE_ENDIAN
     unsigned int ihl:4;
     unsigned int version:4;
@@ -33,7 +33,7 @@ struct iphdr {
     u16 checksum;
     u32 saddr;
     u32 daddr;
-};
+} iphdr_t;
 
 #define IP_BASE_HDR_SIZE sizeof(struct iphdr)
 #define IP_HDR_SIZE(hdr) (hdr->ihl * 4)
@@ -75,6 +75,6 @@ static inline struct iphdr *packet_to_ip_hdr(const char *packet)
 
 void ip_init_hdr(struct iphdr *ip, u32 saddr, u32 daddr, u16 len, u8 proto);
 void handle_ip_packet(iface_info_t *iface, char *packet, int len);
-void ip_send_packet(char *packet, int len);
+void ip_send_packet(iface_info_t* iface, char *packet, int len);
 
 #endif

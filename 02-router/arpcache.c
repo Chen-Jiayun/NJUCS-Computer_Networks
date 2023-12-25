@@ -175,7 +175,26 @@ void *arpcache_sweep(void *arg)
 					}
 				}
 			}
-			// TODO: adjust the request entry
+			arp_req_t *req = NULL, *req_q;
+			list_for_each_entry_safe(req, req_q, &(arpcache.req_list), list) {
+				double time_diff = difftime(now_time, req->sent);
+				if(time_diff > 1) {
+					req->retries += 1;
+					arp_send_request(req->iface, req->ip4);
+					req->sent = time(0);
+				}
+				if(req->retries >= 5) {
+					cached_pkt_t *pkt = NULL, *pkt_q;
+					list_for_each_entry_safe(pkt, pkt_q, &(req->cached_packets), list) {
+						icmp_send_packet(req->iface, pkt->packet, pkt->len, ICMP_DEST_UNREACH, ICMP_HOST_UNREACH);
+						list_delete_entry(&(pkt->list));
+						free(pkt->packet);
+						free(pkt);
+					}
+					list_delete_entry(&(req->list));
+					free(req);
+				}
+			}
 
 		}
 	}

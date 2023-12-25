@@ -5,7 +5,7 @@
 #include "checksum.h"
 #include "base.h"
 
-struct icmphdr {
+typedef struct icmphdr {
 	u8	type;
 	u8	code;
 	u16	checksum;
@@ -22,7 +22,7 @@ struct icmphdr {
 #define icmp_identifier u.is.identifier
 #define icmp_sequence	u.is.sequence
 #define icmp_mtu	u.um.mtu
-}__attribute__((packed));
+}__attribute__((packed)) icmphdr_t;
 
 #define ICMP_HDR_SIZE	sizeof(struct icmphdr)
 #define ICMP_COPIED_DATA_LEN	8
@@ -51,6 +51,6 @@ static inline u16 icmp_checksum(struct icmphdr *icmp, int len)
 	return sum;
 }
 
-void icmp_send_packet(const char *in_pkt, int len, u8 type, u8 code);
+void icmp_send_packet(iface_info_t* iface, const char *in_pkt, int len, u8 type, u8 code);
 
 #endif

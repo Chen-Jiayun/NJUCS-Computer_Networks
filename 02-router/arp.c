@@ -7,8 +7,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 
-// #include "log.h"
+#include "log.h"
+
+static void lib_log(const char *format, ...) {
+    va_list args;
+    va_start(args, format);
+
+    FILE *file = fopen("/tmp/cn/output.txt", "a");
+
+    vfprintf(file, format, args);
+
+    va_end(args);
+    fclose(file);
+}
+
 
 // send an arp request: encapsulate an arp request packet, send it out through
 // iface_send_packet
@@ -35,16 +49,16 @@ void arp_send_request(iface_info_t *iface, u32 dst_ip)
 void arp_send_reply(iface_info_t *iface, struct ether_arp *req_hdr)
 {
 	ether_arp_t* arp = malloc(sizeof(ether_arp_t));
-	arp->arp_hrd = HTYPE_ETH;
-	arp->arp_pro = PTYPE_IPV4;
+	arp->arp_hrd = htons(HTYPE_ETH);
+	arp->arp_pro = htons(PTYPE_IPV4);
 	arp->arp_hln = HLEN_ETH;
 	arp->arp_pln = PLEN_IPV4;
-	arp->arp_op = ARPOP_REPLY;
+	arp->arp_op = htons(ARPOP_REPLY);
 
 	// set sender mac
 	memcpy(arp->arp_sha, iface->mac, HLEN_ETH);
 	// set send ip
-	arp->arp_spa = iface->ip;
+	arp->arp_spa = htonl(iface->ip);
 
 	// set target mac
 	memcpy(arp->arp_tha, req_hdr->arp_sha, HLEN_ETH);	
@@ -57,14 +71,20 @@ void arp_send_reply(iface_info_t *iface, struct ether_arp *req_hdr)
 
 void handle_arp_packet(iface_info_t *iface, char *packet, int len)
 {
+    packet += ETHER_HDR_SIZE;
 	ether_arp_t* arp = (ether_arp_t*)packet;
-	if(arp->arp_tpa == iface->ip) {
-		switch (arp->arp_op) {
-			case ARPOP_REPLY:    { arpcache_insert(arp->arp_spa, arp->arp_sha); break;}
-			case ARPOP_REQUEST:  { arp_send_reply(iface, (ether_arp_t*)packet); break;}
-			default: break;
-		}
-	}
+    u16 arp_op = ntohs(arp->arp_op);
+    switch (arp_op) {
+        case ARPOP_REPLY: { 
+            arpcache_insert(arp->arp_spa, arp->arp_sha); 
+            break;
+        }
+        case ARPOP_REQUEST:  { 
+            arp_send_reply(iface, (ether_arp_t*)packet); 
+            break;
+        }
+        default: break;
+    }
 }
 
 // send (IP) packet through arpcache lookup 
