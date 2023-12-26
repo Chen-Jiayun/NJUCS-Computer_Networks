@@ -1,6 +1,7 @@
 #ifndef __LIST_H__
 #define __LIST_H__
 
+#include "log.h"
 #include <stddef.h>
 
 struct list_head {
@@ -63,5 +64,6 @@ static inline void list_delete_entry(struct list_head *entry)
 	entry->next->prev = entry->prev;
 	entry->prev->next = entry->next;
 }
+
 
 #endif

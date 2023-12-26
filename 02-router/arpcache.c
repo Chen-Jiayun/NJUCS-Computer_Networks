@@ -3,8 +3,10 @@
 #include "base.h"
 #include "ether.h"
 #include "icmp.h"
+#include "include/types.h"
 #include "list.h"
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,6 +14,8 @@
 #include <unistd.h>
 #include <signal.h>
 #include <stdbool.h>
+
+#include "log.h"
 
 static arpcache_t arpcache;
 
@@ -77,10 +81,20 @@ int arpcache_lookup(u32 ip4, u8 mac[ETH_ALEN])
 }
 
 static void append_cache_packet(arp_req_t* req, char* packet, int len) {
+	// log(DEBUG, "\t\tpend a packet");
 	cached_pkt_t* c = (cached_pkt_t*)malloc(sizeof(cached_pkt_t));
+	// log(DEBUG, GREEN "c = %x" CLR, c);
 	c->len = len;
 	c->packet = packet;
-	list_add_tail(&req->cached_packets, &c->list);
+	init_list_head(&c->list);
+	// log(DEBUG, GREEN "c->packet = %x" CLR, c->packet);
+	list_add_tail(&c->list, &req->cached_packets);
+	
+	// ether_header_t* p = (ether_header_t*)c->packet;
+	// fprintf(stderr, "from: ");
+	// print_mac(p->ether_shost);
+	// fprintf(stderr, "to: ");
+	// print_mac(p->ether_dhost);
 }
 
 // append the packet to arpcache
@@ -94,8 +108,8 @@ void arpcache_append_packet(iface_info_t *iface, u32 ip4, char *packet, int len)
 {
 	atomic {
 		bool find = false;
-		arp_req_t* req, *req_q;
-		list_for_each_entry_safe(req, req_q, &(arpcache.req_list), list) {
+		arp_req_t* req;
+		list_for_each_entry(req, &(arpcache.req_list), list) {
 			if(req->iface == iface && req->ip4 == ip4) {
 				find = true;
 				req->retries += 1;
@@ -103,14 +117,14 @@ void arpcache_append_packet(iface_info_t *iface, u32 ip4, char *packet, int len)
 				append_cache_packet(req, packet, len);
 			}
 		}
-
 		if(!find) {
 			arp_req_t* a = (arp_req_t*)malloc(sizeof(arp_req_t));
 			a->iface = iface;
 			a->ip4 = ip4;
 			a->sent = time(0);
 			a->retries = 0;
-			list_add_tail(&(arpcache.req_list), &a->list);
+			init_list_head(&a->cached_packets);
+			list_add_tail(&a->list, &(arpcache.req_list));
 			append_cache_packet(a, packet, len);
 			arp_send_request(iface, ip4);
 		}
@@ -131,17 +145,35 @@ void arpcache_insert(u32 ip4, u8 mac[ETH_ALEN])
 				strncpy((char*) e->mac, (const char*)mac, ETH_ALEN);
 				e->added = time(0);
 				e->valid = 1;
+				break;
+				log(DEBUG, GREEN "\tadd [%x, ", ip4);
+				print_mac(mac);
+				log(DEBUG, CLR "] successfully");
 			}
 		}
 		arp_req_t* req, *req_q;
 		list_for_each_entry_safe(req, req_q, &(arpcache.req_list), list) {
 			if(req->ip4 == ip4) {
-				cached_pkt_t* pkt, *pkt_q;
-				list_for_each_entry_safe(pkt,pkt_q, &(req->cached_packets), list) {
-					iface_send_packet_by_arp(req->iface, req->ip4, pkt->packet, pkt->len);
+				cached_pkt_t* pkt;
+				list_for_each_entry(pkt, &req->cached_packets, list) {
+					// AA deadlock:
+					// iface_send_packet_by_arp(req->iface, req->ip4, pkt->packet, pkt->len);
+					// log(DEBUG, "\t\t need to send a pending packet\n");
+					// log(DEBUG, RED "pkt = %x" CLR, pkt);
+					ether_header_t* p = (ether_header_t*)pkt->packet;
+
+					// log(DEBUG, RED "p = %x" CLR, p);
+
+					// fprintf(stderr, "from: ");
+					// print_mac(p->ether_shost);
+					// fprintf(stderr, "to: ");
+					// print_mac(p->ether_dhost);
+
+					memcpy(p->ether_shost, req->iface->mac, ETH_ALEN);
+					memcpy(p->ether_dhost, mac, ETH_ALEN);
+					iface_send_packet(req->iface, pkt->packet, pkt->len);
+
 					list_delete_entry(&(pkt->list));
-					free(pkt->packet);
-					free(pkt);
 				}
 			}
 			list_delete_entry(&(req->list));

@@ -1,3 +1,4 @@
+#include "include/ether.h"
 #include "ip.h"
 #include "icmp.h"
 #include "arpcache.h"
@@ -6,8 +7,10 @@
 
 // #include "log.h"
 
+#include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 // initialize ip header 
 void ip_init_hdr(struct iphdr *ip, u32 saddr, u32 daddr, u16 len, u8 proto)
@@ -33,11 +36,6 @@ rt_entry_t *longest_prefix_match(u32 dst)
     u32 match_num = 0;
 	rt_entry_t *entry = NULL;
 	list_for_each_entry(entry, &rtable, list) {
-		fprintf(stdout, IP_FMT"\t"IP_FMT"\t"IP_FMT"\t%s\n", \
-				HOST_IP_FMT_STR(entry->dest), \
-				HOST_IP_FMT_STR(entry->mask), \
-				HOST_IP_FMT_STR(entry->gw), \
-				entry->if_name);
         u32 masked_ip = entry->mask & entry->dest; 
         u32 masked_dst_ip = entry->mask & dst;
         if(masked_ip == masked_dst_ip && masked_dst_ip > match_num) {
@@ -55,7 +53,18 @@ rt_entry_t *longest_prefix_match(u32 dst)
 // router itself. This function is used to send ICMP packets.
 void ip_send_packet(iface_info_t *iface, char *packet, int len)
 {
-    icmphdr_t* p = (icmphdr_t*)packet;
-    iphdr_t* payload = (iphdr_t*)((void*)p + ICMP_HDR_SIZE);
-    iface_send_packet_by_arp(iface, payload->saddr, packet, len);
+	void* out = malloc(len + IP_BASE_HDR_SIZE + ETHER_HDR_SIZE);
+
+	ether_header_t* eth = (ether_header_t*)out;
+	memcpy(eth->ether_shost, iface->mac, ETH_ALEN);
+	eth->ether_type = htons(ETH_P_IP);
+
+    iphdr_t* in_ip = (iphdr_t*)(packet + ICMP_HDR_SIZE);
+	iphdr_t* ip = (iphdr_t*)(out + ETHER_HDR_SIZE);
+
+	ip_init_hdr(ip, iface->ip, ntohl(in_ip->saddr), len + IP_BASE_HDR_SIZE, IPPROTO_ICMP);
+
+	memcpy(out + IP_BASE_HDR_SIZE + ETHER_HDR_SIZE, packet, len);
+
+    iface_send_packet_by_arp(iface, ntohl(ip->daddr), out, len + ETHER_HDR_SIZE + IP_BASE_HDR_SIZE);
 }

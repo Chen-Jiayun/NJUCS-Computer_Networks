@@ -1,8 +1,13 @@
 #include "ip.h"
 #include "icmp.h"
+#include "include/arp.h"
+#include "include/arpcache.h"
+#include "include/ether.h"
 #include "rtable.h"
+#include <netinet/in.h>
 #include <stdio.h>
-#include <stdlib.h>
+
+#include "log.h"
 
 // handle ip packet
 //
@@ -12,21 +17,35 @@
 void handle_ip_packet(iface_info_t *iface, char *packet, int len)
 {
 	struct iphdr* p = packet_to_ip_hdr(packet);
-	if(p->daddr == iface->ip) {
-		icmp_send_packet(iface, (const char*)p, p->tot_len, ICMP_ECHOREPLY, 0);
+	u32 daddr = ntohl(p->daddr);
+
+	ether_header_t* eth = (ether_header_t*)packet;
+	arpcache_insert(ntohl(p->saddr), eth->ether_shost);
+
+	// fprintf(stderr, "daddr = %x\n", daddr);
+	if(daddr == iface->ip) {
+		icmp_send_packet(iface, (const char*)p, ntohs(p->tot_len), ICMP_ECHOREPLY, 0);
 	}
 	else {
+		p->ttl -= 1;
 		if(p->ttl == 0) {
-			icmp_send_packet(iface, (const char*)p, p->tot_len, ICMP_TIME_EXCEEDED, ICMP_EXC_TTL);
+			log(DEBUG, RED "one hup not well" CLR);
+			icmp_send_packet(iface, (const char*)p, IP_BASE_HDR_SIZE + 8, ICMP_TIME_EXCEEDED, ICMP_EXC_TTL);
 		}	
 		else {
-            rt_entry_t* rt = longest_prefix_match(p->daddr);
+            rt_entry_t* rt = longest_prefix_match(daddr);
             if(rt) {
-                iface_send_packet(rt->iface, (const char*)p, p->tot_len);
+				// effect checksum??
+				p->checksum = ip_checksum(p);
+				// p->ttl += 1;
+				log(DEBUG, GREEN "forward to %s" CLR, rt->if_name);
+				iface_send_packet_by_arp(rt->iface, daddr, packet, len);
             }
             else {
-                icmp_send_packet(iface, (const char*)p, p->tot_len, ICMP_DEST_UNREACH, ICMP_HOST_UNREACH);
+				log(DEBUG, YELLOW "nowhere to forward" CLR);
+                icmp_send_packet(iface, (const char*)p, ntohs(p->tot_len), ICMP_DEST_UNREACH, ICMP_HOST_UNREACH);
             }
 		}
 	}
+	// log(DEBUG, "return from handle_ip_packet");
 }

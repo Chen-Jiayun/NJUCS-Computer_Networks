@@ -1,7 +1,5 @@
 #include "icmp.h"
 #include "ip.h"
-#include "rtable.h"
-#include "arp.h"
 #include "base.h"
 
 #include <stdio.h>
@@ -15,7 +13,7 @@ void icmp_send_packet(iface_info_t *iface, const char *in_pkt, int len, u8 type,
 	p->type = type;
 	p->code = code;
 	void* payload = (void*)p + ICMP_HDR_SIZE;
-	strncpy((char*)payload, in_pkt, len);
+	memcpy((char*)payload, in_pkt, len);
 	
 	p->checksum = icmp_checksum(p, ICMP_HDR_SIZE + len);
 

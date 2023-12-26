@@ -10,11 +10,11 @@
 #define ETH_P_IP		0x0800
 #define ETH_P_ARP		0x0806
 
-struct ether_header {
+typedef struct ether_header {
 	u8 ether_dhost[ETH_ALEN];
 	u8 ether_shost[ETH_ALEN];
 	u16 ether_type;
-};
+} ether_header_t;
 
 #define ETHER_HDR_SIZE sizeof(struct ether_header)
 
