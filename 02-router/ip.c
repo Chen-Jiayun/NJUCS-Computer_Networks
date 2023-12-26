@@ -22,14 +22,13 @@ void handle_ip_packet(iface_info_t *iface, char *packet, int len)
 	ether_header_t* eth = (ether_header_t*)packet;
 	arpcache_insert(ntohl(p->saddr), eth->ether_shost);
 
-	// fprintf(stderr, "daddr = %x\n", daddr);
 	if(daddr == iface->ip) {
 		icmp_send_packet(iface, (const char*)p, ntohs(p->tot_len), ICMP_ECHOREPLY, 0);
 	}
 	else {
 		p->ttl -= 1;
 		if(p->ttl == 0) {
-			log(DEBUG, RED "one hup not well" CLR);
+			log(DEBUG, RED "one hup works not well" CLR);
 			icmp_send_packet(iface, (const char*)p, IP_BASE_HDR_SIZE + 8, ICMP_TIME_EXCEEDED, ICMP_EXC_TTL);
 		}	
 		else {
@@ -47,5 +46,4 @@ void handle_ip_packet(iface_info_t *iface, char *packet, int len)
             }
 		}
 	}
-	// log(DEBUG, "return from handle_ip_packet");
 }

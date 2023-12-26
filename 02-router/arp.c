@@ -75,14 +75,10 @@ void handle_arp_packet(iface_info_t *iface, char *packet, int len)
     u16 arp_op = ntohs(arp->arp_op);
     switch (arp_op) {
         case ARPOP_REPLY: { 
-			log(DEBUG, GREEN "\tgoing to add [%x, ", arp->arp_spa);
-			print_mac(arp->arp_sha);
-			log(DEBUG, CLR "] to cache");
             arpcache_insert(ntohl(arp->arp_spa), arp->arp_sha); 
             break;
         }
         case ARPOP_REQUEST:  { 
-			// log(DEBUG, "\tdeal arp request\n");
             arp_send_reply(iface, (ether_arp_t*)packet); 
             break;
         }
@@ -100,7 +96,6 @@ void iface_send_packet_by_arp(iface_info_t *iface, u32 dst_ip, char *packet, int
 	u8 dst_mac[ETH_ALEN];
 	int found = arpcache_lookup(dst_ip, dst_mac);
 	if (found) {
-		// log(DEBUG, "found the mac of %x, send this packet", dst_ip);
 		struct ether_header *eh = (struct ether_header *)packet;
 		memcpy(eh->ether_shost, iface->mac, ETH_ALEN);
 		memcpy(eh->ether_dhost, dst_mac, ETH_ALEN);
@@ -108,7 +103,6 @@ void iface_send_packet_by_arp(iface_info_t *iface, u32 dst_ip, char *packet, int
 		iface_send_packet(iface, packet, len);
 	}
 	else {
-		// log(DEBUG, "lookup %x failed, pend this packet", dst_ip);
 		arpcache_append_packet(iface, dst_ip, packet, len);
 	}
 }

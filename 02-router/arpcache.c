@@ -69,7 +69,7 @@ int arpcache_lookup(u32 ip4, u8 mac[ETH_ALEN])
 			arp_cache_entry_t* e = arpcache.entries + i;
 			if(e->valid) {
 				if(ip4 == e->ip4) {
-					// side effect to  return found-mac
+					// side effect to return found-mac
 					strncpy((char*)mac, (const char*)e->mac, ETH_ALEN);
 					ret = 1; 
 					break;
@@ -81,20 +81,11 @@ int arpcache_lookup(u32 ip4, u8 mac[ETH_ALEN])
 }
 
 static void append_cache_packet(arp_req_t* req, char* packet, int len) {
-	// log(DEBUG, "\t\tpend a packet");
 	cached_pkt_t* c = (cached_pkt_t*)malloc(sizeof(cached_pkt_t));
-	// log(DEBUG, GREEN "c = %x" CLR, c);
 	c->len = len;
 	c->packet = packet;
 	init_list_head(&c->list);
-	// log(DEBUG, GREEN "c->packet = %x" CLR, c->packet);
 	list_add_tail(&c->list, &req->cached_packets);
-	
-	// ether_header_t* p = (ether_header_t*)c->packet;
-	// fprintf(stderr, "from: ");
-	// print_mac(p->ether_shost);
-	// fprintf(stderr, "to: ");
-	// print_mac(p->ether_dhost);
 }
 
 // append the packet to arpcache
@@ -146,9 +137,6 @@ void arpcache_insert(u32 ip4, u8 mac[ETH_ALEN])
 				e->added = time(0);
 				e->valid = 1;
 				break;
-				log(DEBUG, GREEN "\tadd [%x, ", ip4);
-				print_mac(mac);
-				log(DEBUG, CLR "] successfully");
 			}
 		}
 		arp_req_t* req, *req_q;
@@ -156,19 +144,7 @@ void arpcache_insert(u32 ip4, u8 mac[ETH_ALEN])
 			if(req->ip4 == ip4) {
 				cached_pkt_t* pkt;
 				list_for_each_entry(pkt, &req->cached_packets, list) {
-					// AA deadlock:
-					// iface_send_packet_by_arp(req->iface, req->ip4, pkt->packet, pkt->len);
-					// log(DEBUG, "\t\t need to send a pending packet\n");
-					// log(DEBUG, RED "pkt = %x" CLR, pkt);
 					ether_header_t* p = (ether_header_t*)pkt->packet;
-
-					// log(DEBUG, RED "p = %x" CLR, p);
-
-					// fprintf(stderr, "from: ");
-					// print_mac(p->ether_shost);
-					// fprintf(stderr, "to: ");
-					// print_mac(p->ether_dhost);
-
 					memcpy(p->ether_shost, req->iface->mac, ETH_ALEN);
 					memcpy(p->ether_dhost, mac, ETH_ALEN);
 					iface_send_packet(req->iface, pkt->packet, pkt->len);
@@ -221,7 +197,6 @@ void *arpcache_sweep(void *arg)
 						icmp_send_packet(req->iface, pkt->packet, pkt->len, ICMP_DEST_UNREACH, ICMP_HOST_UNREACH);
 						list_delete_entry(&(pkt->list));
 						free(pkt->packet);
-						free(pkt);
 					}
 					list_delete_entry(&(req->list));
 					free(req);
@@ -230,6 +205,5 @@ void *arpcache_sweep(void *arg)
 
 		}
 	}
-
 	return NULL;
 }

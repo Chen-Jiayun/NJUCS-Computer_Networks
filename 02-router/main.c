@@ -23,14 +23,10 @@ void handle_packet(iface_info_t *iface, char *packet, int len)
 
 	switch (ntohs(eh->ether_type)) {
 		case ETH_P_IP:
-			// log(DEBUG, "IP comes");
 			handle_ip_packet(iface, packet, len);
-			// log(DEBUG, "IP deal done");
 			break;
 		case ETH_P_ARP:
-			// log(DEBUG, RED "ARP comes" CLR);
 			handle_arp_packet(iface, packet, len);
-			// log(DEBUG, RED "ARP deal done" CLR);
 			break;
 		default:
 			log(ERROR, "Unknown packet type 0x%04hx, ingore it.", \

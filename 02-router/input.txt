@@ -1,4 +1,0 @@
-nodes
-links
-r1 ./router 2&> router_log.txt & 
-h1 traceroute h2
