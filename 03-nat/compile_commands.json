@@ -1,0 +1,53 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-g",
+      "-Wall",
+      "-Wno-unused-variable",
+      "-Wno-unused-function",
+      "-Iinclude",
+      "-o",
+      "ip.o",
+      "ip.c"
+    ],
+    "directory": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/03-nat",
+    "file": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/03-nat/ip.c",
+    "output": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/03-nat/ip.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-g",
+      "-Wall",
+      "-Wno-unused-variable",
+      "-Wno-unused-function",
+      "-Iinclude",
+      "-o",
+      "main.o",
+      "main.c"
+    ],
+    "directory": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/03-nat",
+    "file": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/03-nat/main.c",
+    "output": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/03-nat/main.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-g",
+      "-Wall",
+      "-Wno-unused-variable",
+      "-Wno-unused-function",
+      "-Iinclude",
+      "-o",
+      "nat.o",
+      "nat.c"
+    ],
+    "directory": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/03-nat",
+    "file": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/03-nat/nat.c",
+    "output": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/03-nat/nat.o"
+  }
+]

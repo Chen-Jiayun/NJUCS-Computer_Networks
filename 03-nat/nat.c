@@ -29,6 +29,8 @@ static iface_info_t *if_name_to_iface(const char *if_name)
 static int get_packet_direction(char *packet)
 {
 	fprintf(stdout, "TODO: determine the direction of this packet.\n");
+	// DIR_OUT: s_ip and iface's ip is in the same subnet && d_ip is not in the same subnet
+
 
 	return DIR_INVALID;
 }
@@ -45,7 +47,7 @@ void nat_translate_packet(iface_info_t *iface, char *packet, int len)
 	int dir = get_packet_direction(packet);
 	if (dir == DIR_INVALID) {
 		log(ERROR, "invalid packet direction, drop it.");
-		icmp_send_packet(packet, len, ICMP_DEST_UNREACH, ICMP_HOST_UNREACH);
+		icmp_send_packet(iface, packet, len, ICMP_DEST_UNREACH, ICMP_HOST_UNREACH);
 		free(packet);
 		return ;
 	}

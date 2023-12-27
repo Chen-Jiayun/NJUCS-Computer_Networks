@@ -3,6 +3,10 @@
 
 #include <stdint.h>
 
+#define NET_CONST_MTU 1500
+
+#define DEFAULT_TTL 64
+
 typedef uint8_t u8;
 typedef uint16_t u16;
 typedef uint32_t u32;
