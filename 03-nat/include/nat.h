@@ -53,7 +53,7 @@ struct nat_table {
 	iface_info_t *external_iface;		// pointer to external interface
 
 	u8 assigned_ports[65536];			// port pool, indicates whether a port is assigned
-	nat_mapping_t* port_2_map[65536];			// port pool, indicates whether a port is assigned
+	nat_mapping_t* port_2_map[65536];			// get mapping through external ip
 
 	struct list_head rules;				// dnat rules
 

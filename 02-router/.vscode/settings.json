@@ -1,0 +1,15 @@
+{
+    "cSpell.words": [
+        "arpcache",
+        "icmphdr",
+        "iphdr"
+    ],
+    "files.associations": {
+        "arp.h": "c",
+        "arpcache.h": "c",
+        "icmp.h": "c",
+        "ip.h": "c",
+        "rtable.h": "c",
+        "log.h": "c"
+    }
+}

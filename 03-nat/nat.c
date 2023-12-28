@@ -107,7 +107,6 @@ static int get_packet_direction(iface_info_t* iface, char *packet)
 		ret = DIR_OUT;
 		log(DEBUG, YELLOW "\tout(before nat):" CLR " from %x:%hu, to %x:%hu, via %x[%s]:[port: to be fixed]", s_ip_h, s_port, d_ip_h, d_port, iface_ip_h, iface->name);
 	}
-	// DIR_IN: find entry in drule in
 	// DIR_IN: d_ip and iface's ip is in the same subnet
 	else if(d_ip_h == iface_ip_h && iface == nat.external_iface){
 		ret = DIR_IN;

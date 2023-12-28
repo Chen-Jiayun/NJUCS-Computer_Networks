@@ -1,0 +1,137 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-g",
+      "-Wall",
+      "-Iinclude",
+      "-o",
+      "arp.o",
+      "arp.c"
+    ],
+    "directory": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/02-router",
+    "file": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/02-router/arp.c",
+    "output": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/02-router/arp.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-g",
+      "-Wall",
+      "-Iinclude",
+      "-o",
+      "arpcache.o",
+      "arpcache.c"
+    ],
+    "directory": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/02-router",
+    "file": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/02-router/arpcache.c",
+    "output": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/02-router/arpcache.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-g",
+      "-Wall",
+      "-Iinclude",
+      "-o",
+      "icmp.o",
+      "icmp.c"
+    ],
+    "directory": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/02-router",
+    "file": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/02-router/icmp.c",
+    "output": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/02-router/icmp.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-g",
+      "-Wall",
+      "-Iinclude",
+      "-o",
+      "ip_base.o",
+      "ip_base.c"
+    ],
+    "directory": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/02-router",
+    "file": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/02-router/ip_base.c",
+    "output": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/02-router/ip_base.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-g",
+      "-Wall",
+      "-Iinclude",
+      "-o",
+      "rtable.o",
+      "rtable.c"
+    ],
+    "directory": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/02-router",
+    "file": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/02-router/rtable.c",
+    "output": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/02-router/rtable.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-g",
+      "-Wall",
+      "-Iinclude",
+      "-o",
+      "rtable_internal.o",
+      "rtable_internal.c"
+    ],
+    "directory": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/02-router",
+    "file": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/02-router/rtable_internal.c",
+    "output": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/02-router/rtable_internal.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-g",
+      "-Wall",
+      "-Iinclude",
+      "-o",
+      "device_internal.o",
+      "device_internal.c"
+    ],
+    "directory": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/02-router",
+    "file": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/02-router/device_internal.c",
+    "output": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/02-router/device_internal.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-g",
+      "-Wall",
+      "-Iinclude",
+      "-o",
+      "main.o",
+      "main.c"
+    ],
+    "directory": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/02-router",
+    "file": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/02-router/main.c",
+    "output": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/02-router/main.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-g",
+      "-Wall",
+      "-Iinclude",
+      "-o",
+      "ip.o",
+      "ip.c"
+    ],
+    "directory": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/02-router",
+    "file": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/02-router/ip.c",
+    "output": "/home/ubuntu/2023-fall/CN/lab6-2023autumn-Chen-Jiayun/02-router/ip.o"
+  }
+]
