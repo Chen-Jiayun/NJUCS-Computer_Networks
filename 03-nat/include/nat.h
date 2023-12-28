@@ -32,7 +32,7 @@ struct nat_connection {
 };
 
 // the mapping entry used for address translation
-struct nat_mapping {
+typedef struct nat_mapping {
 	struct list_head list;
 
 	u32 remote_ip;			// ip address of the real peer
@@ -44,7 +44,7 @@ struct nat_mapping {
 
 	time_t update_time;		// when receiving the latest packet
 	struct nat_connection conn;	// statistics of the tcp connection
-};
+} nat_mapping_t;
 
 struct nat_table {
 	struct list_head nat_mapping_list[HASH_8BITS];	// nat hash table
@@ -53,6 +53,7 @@ struct nat_table {
 	iface_info_t *external_iface;		// pointer to external interface
 
 	u8 assigned_ports[65536];			// port pool, indicates whether a port is assigned
+	nat_mapping_t* port_2_map[65536];			// port pool, indicates whether a port is assigned
 
 	struct list_head rules;				// dnat rules
 
@@ -60,13 +61,13 @@ struct nat_table {
 	pthread_t thread;					// thread id of nat timeout
 };
 
-struct dnat_rule {
+typedef struct dnat_rule {
 	struct list_head list;
 	u32 external_ip;		// ip address seen in public network (the ip address of external interface)
 	u16 external_port;		// port seen in public network
 	u32 internal_ip;		// ip address seen in private network
 	u16 internal_port;		// port seen in private network
-};
+} dnat_rule_t;
 
 void nat_init(const char *config_file);
 void nat_exit();
