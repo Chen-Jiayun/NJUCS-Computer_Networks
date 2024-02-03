@@ -12,7 +12,7 @@ All codes are conducted within the soft deadline (soft ddl) and passed all the t
 
 Feel free to customize the content to better suit your specific repository and instructions.
 
-This repo might lead you to a cheating trip, but I'd like to quote a note given by my friend (Shannju)[https://github.com/Shannju/njucser_helphelp]:
+This repo might lead you to a cheating trip, but I'd like to quote a note given by my friend [Shannju](https://github.com/Shannju/njucser_helphelp):
 
 ```text
 真心希望这份答案能帮你更好的纠错，或者能让你在DDL前睡一个好觉，甚至和喜欢的人多出去玩一会儿。
